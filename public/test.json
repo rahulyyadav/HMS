@@ -1,0 +1,105 @@
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "age": 32,
+  "gender": "Male",
+  "weight": 75,
+  "height": 178,
+  "bloodType": "O+",
+  "emergencyContact": "+1 234-567-8901",
+  "healthStatus": "Excellent",
+  "metrics": {
+    "heartRate": {
+      "current": 72,
+      "average": 75,
+      "data": [78, 76, 74, 72, 73, 75, 77],
+      "unit": "bpm"
+    },
+    "bloodPressure": {
+      "current": {
+        "systolic": 120,
+        "diastolic": 80
+      },
+      "average": {
+        "systolic": 122,
+        "diastolic": 82
+      },
+      "data": [
+        { "systolic": 125, "diastolic": 85 },
+        { "systolic": 123, "diastolic": 83 },
+        { "systolic": 122, "diastolic": 82 },
+        { "systolic": 120, "diastolic": 80 },
+        { "systolic": 121, "diastolic": 81 },
+        { "systolic": 124, "diastolic": 84 },
+        { "systolic": 123, "diastolic": 83 }
+      ],
+      "unit": "mmHg"
+    },
+    "bloodSugar": {
+      "current": 95,
+      "average": 98,
+      "data": [100, 98, 97, 96, 95, 97, 99],
+      "unit": "mg/dL"
+    },
+    "oxygenLevel": {
+      "current": 98,
+      "average": 97,
+      "data": [96, 97, 97, 98, 98, 97, 96],
+      "unit": "%"
+    },
+    "temperature": {
+      "current": 36.8,
+      "average": 36.7,
+      "data": [36.6, 36.7, 36.7, 36.8, 36.8, 36.7, 36.6],
+      "unit": "°C"
+    }
+  },
+  "appointments": [
+    {
+      "id": 1,
+      "date": "2023-03-15T10:00:00",
+      "doctor": "Dr. Sarah Johnson",
+      "type": "General Checkup",
+      "status": "Completed"
+    },
+    {
+      "id": 2,
+      "date": "2023-06-22T14:30:00",
+      "doctor": "Dr. Mark Williams",
+      "type": "Blood Test",
+      "status": "Completed"
+    },
+    {
+      "id": 3,
+      "date": "2023-09-05T11:15:00",
+      "doctor": "Dr. Sarah Johnson",
+      "type": "Follow-up",
+      "status": "Completed"
+    },
+    {
+      "id": 4,
+      "date": "2023-12-18T09:30:00",
+      "doctor": "Dr. Sarah Johnson",
+      "type": "Annual Physical",
+      "status": "Scheduled"
+    }
+  ],
+  "assignedDoctor": {
+    "name": "Dr. Sarah Johnson",
+    "specialty": "General Physician",
+    "experience": "15 years",
+    "hospital": "Metro Medical Center",
+    "contactNumber": "+1 234-567-8902",
+    "email": "dr.johnson@example.com",
+    "availability": "Mon-Fri, 9AM-5PM",
+    "image": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=2070&auto=format&fit=crop"
+  },
+  "nearestHospital": {
+    "name": "Metro Medical Center",
+    "address": "456 Medical Avenue, Boston, MA 02215",
+    "contactNumber": "+1 234-567-8903",
+    "emergencyNumber": "+1 234-567-8904",
+    "distance": "1.8 km",
+    "coordinates": { "lat": 42.3505, "lng": -71.1054 }
+  }
+}

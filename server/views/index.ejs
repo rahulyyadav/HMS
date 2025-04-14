@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cognito Auth Server</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        line-height: 1.6;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        color: #333;
+      }
+      h1 {
+        color: #2563eb;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 10px;
+      }
+      .card {
+        background-color: #f9fafb;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .btn {
+        display: inline-block;
+        background-color: #2563eb;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+      .btn:hover {
+        background-color: #1d4ed8;
+      }
+      .status {
+        margin-bottom: 20px;
+        padding: 10px;
+        border-radius: 4px;
+      }
+      .status.authenticated {
+        background-color: #d1fae5;
+        border-left: 4px solid #10b981;
+      }
+      .status.unauthenticated {
+        background-color: #fee2e2;
+        border-left: 4px solid #ef4444;
+      }
+      pre {
+        background-color: #f1f5f9;
+        padding: 15px;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Cognito Auth Server</h1>
+
+    <div
+      class="status <%= isAuthenticated ? 'authenticated' : 'unauthenticated' %>"
+    >
+      <h2>
+        Status: <%= isAuthenticated ? 'Authenticated' : 'Not Authenticated' %>
+      </h2>
+    </div>
+
+    <div class="card">
+      <h2>Actions</h2>
+      <a href="/login" class="btn">Login with Cognito</a>
+      <a href="/status" class="btn">Check Server Status</a>
+      <% if (isAuthenticated) { %>
+      <a href="/user" class="btn">View User Info</a>
+      <a href="/logout" class="btn">Logout</a>
+      <% } %>
+    </div>
+
+    <% if (isAuthenticated && userInfo) { %>
+    <div class="card">
+      <h2>User Information</h2>
+      <pre><%= JSON.stringify(userInfo, null, 2) %></pre>
+    </div>
+    <% } %>
+
+    <div class="card">
+      <h2>Help</h2>
+      <p>
+        This is a debug interface for the Cognito authentication server. You can
+        use this page to test the login flow and view your authentication
+        status.
+      </p>
+      <p>Available endpoints:</p>
+      <ul>
+        <li><code>/</code> - This page</li>
+        <li><code>/status</code> - Server status JSON</li>
+        <li><code>/login</code> - Redirects to Cognito login</li>
+        <li><code>/callback</code> - OAuth callback (used internally)</li>
+        <li><code>/user</code> - Get user info (if authenticated)</li>
+        <li><code>/logout</code> - Logout and clear session</li>
+      </ul>
+    </div>
+  </body>
+</html>

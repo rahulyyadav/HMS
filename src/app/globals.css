@@ -3,6 +3,9 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --transition-fast: 0.2s;
+  --transition-medium: 0.3s;
+  --transition-slow: 0.5s;
 }
 
 @theme inline {
@@ -22,5 +25,89 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Common transitions for interactive elements */
+a,
+button,
+input,
+select,
+textarea {
+  transition: all var(--transition-medium) ease;
+}
+
+/* Better focus styles */
+:focus {
+  outline: 2px solid #0056b3;
+  outline-offset: 2px;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Animation classes */
+.animate-fadeIn {
+  animation: fadeIn var(--transition-medium) ease-out forwards;
+}
+
+.animate-slideUp {
+  animation: slideUp var(--transition-medium) ease-out forwards;
+}
+
+.animate-slideDown {
+  animation: slideDown var(--transition-medium) ease-out forwards;
+}
+
+/* Hover effects */
+.hover-lift {
+  transition: transform var(--transition-medium) ease-out,
+    box-shadow var(--transition-medium) ease-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Improve mobile experience */
+@media (max-width: 640px) {
+  .mobile-padded {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
