@@ -1,0 +1,139 @@
+#include <Wire.h>
+#include <SPI.h>
+#include "MAX30105.h"
+#include "heartRate.h"
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+// OLED Setup
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET    -1
+#define SCREEN_ADDRESS 0x3C
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+// MAX30105 Setup
+MAX30105 particleSensor;
+const byte RATE_SIZE = 4;
+byte rates[RATE_SIZE];
+byte rateSpot = 0;
+long lastBeat = 0;
+float beatsPerMinute;
+int beatAvg;
+
+// MAX6675 Setup
+const int CS_PIN = 10;
+
+// ECG Pin
+const int ecgPin = A0;
+
+void setup() {
+  Serial.begin(115200);
+
+  // OLED init
+  if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+    Serial.println(F("OLED failed"));
+    while (1);
+  }
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+
+  // Temperature sensor setup
+  pinMode(CS_PIN, OUTPUT);
+  digitalWrite(CS_PIN, HIGH);
+  SPI.begin();
+
+  // MAX30105 init
+  if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) {
+    Serial.println("MAX30105 not found. Check wiring!");
+    while (1);
+  }
+  particleSensor.setup();
+  particleSensor.setPulseAmplitudeRed(0x7F);
+  particleSensor.setPulseAmplitudeIR(0x7F);
+  particleSensor.setSampleRate(400);
+
+  Serial.println("All sensors initialized.");
+  delay(1000); // Warm-up
+}
+
+void loop() {
+  // --- HEART RATE & SpO2 ---
+  long irValue = particleSensor.getIR();
+  long redValue = particleSensor.getRed();
+  int spo2 = 0;
+  beatAvg = 0;
+
+  if (irValue > 50000 && checkForBeat(irValue)) {
+    long delta = millis() - lastBeat;
+    lastBeat = millis();
+    beatsPerMinute = 60 / (delta / 1000.0);
+
+    if (beatsPerMinute > 20 && beatsPerMinute < 255) {
+      rates[rateSpot++] = (byte)beatsPerMinute;
+      rateSpot %= RATE_SIZE;
+
+      for (byte x = 0; x < RATE_SIZE; x++) {
+        beatAvg += rates[x];
+      }
+      beatAvg /= RATE_SIZE;
+    }
+  }
+
+  // --- SPO2 Improved Estimation ---
+  if (irValue > 50000 && redValue > 10000) {
+    float ratio = (float)redValue / (float)irValue;
+    spo2 = (int)(104 - (17 * ratio)); // Calibrated equation
+    spo2 = constrain(spo2, 70, 100);  // Clamp values
+  }
+
+  // --- TEMPERATURE ---
+  float temperature = readTemperature();
+
+  // --- ECG ---
+  int ecgValue = analogRead(ecgPin);
+
+  // --- DISPLAY ---
+  display.clearDisplay();
+
+  display.setCursor(0, 0);
+  display.print("BPM: ");
+  display.print(beatAvg);
+
+  display.setCursor(70, 0);
+  display.print("SpO2: ");
+  display.print(spo2);
+  display.print("%");
+
+  display.setCursor(0, 20);
+  display.print("Temp: ");
+  if (temperature == -1) {
+    display.print("NC");  // Not Connected
+  } else {
+    display.print(temperature);
+    display.print(" C");
+  }
+
+  display.setCursor(0, 40);
+  display.print("ECG: ");
+  display.print(ecgValue);
+
+  display.display();
+
+  delay(200);  // Small delay for stability
+}
+
+float readTemperature() {
+  digitalWrite(CS_PIN, LOW);
+  delay(1);
+  uint16_t data = SPI.transfer16(0x00);
+  digitalWrite(CS_PIN, HIGH);
+
+  if (data & 0x4) {
+    return -1;
+  }
+
+  data >>= 3;
+  return data * 0.25;
+}
